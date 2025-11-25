@@ -1,0 +1,48 @@
+version: '3.8'
+
+services:
+  # ChromaDB Vector Database
+  chromadb:
+    image: chromadb/chroma:latest
+    container_name: chromadb
+    ports:
+      - "8000:8000"
+    volumes:
+      - chromadb_data:/chroma/chroma
+    environment:
+      - IS_PERSISTENT=TRUE
+      - ANONYMIZED_TELEMETRY=FALSE
+    networks:
+      - doc_loading_network
+    restart: unless-stopped
+  
+  # Documentation Loading Agent
+  doc_loader:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: doc_loading_agent
+    depends_on:
+      - chromadb
+    environment:
+      - CHROMA_HOST=chromadb
+      - CHROMA_PORT=8000
+      - CONTEXT7_API_KEY=${CONTEXT7_API_KEY}
+      - PYTHONUNBUFFERED=1
+    volumes:
+      - ./data:/data
+      - ./agent.py:/app/agent.py
+      - ./load_frameworks.py:/app/load_frameworks.py
+    networks:
+      - doc_loading_network
+    stdin_open: true
+    tty: true
+    command: tail -f /dev/null  # Keep container running
+
+volumes:
+  chromadb_data:
+    driver: local
+
+networks:
+  doc_loading_network:
+    driver: bridge
