@@ -1,0 +1,37 @@
+{
+  "agent": {
+    "name": "DocumentationLoadingAgent",
+    "version": "1.0.0",
+    "description": "Universal Memory Bridge documentation loader"
+  },
+  "chromadb": {
+    "host": "localhost",
+    "port": 8000,
+    "collection": "documentation_library",
+    "persistent": true
+  },
+  "context7": {
+    "enabled": true,
+    "timeout": 300,
+    "retry_attempts": 3
+  },
+  "docling": {
+    "enabled": true,
+    "chunk_size": 1000,
+    "overlap": 200
+  },
+  "loading": {
+    "batch_size": 5,
+    "delay_between_requests": 2,
+    "priority_first": true
+  },
+  "logging": {
+    "level": "INFO",
+    "format": "%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    "file": "/data/agent.log"
+  },
+  "output": {
+    "results_dir": "/data",
+    "index_file": "/data/documentation_index.json"
+  }
+}
